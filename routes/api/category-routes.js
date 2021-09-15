@@ -14,10 +14,14 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
+  Category.findOne({include:[Product]})
+  .then(data => res.json(data))
+  .catch(err => res.json(err));
 });
 
 router.post('/', (req, res) => {
   // create a new category
+  
 });
 
 router.put('/:id', (req, res) => {
