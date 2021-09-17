@@ -11,12 +11,23 @@ router.get('/', (req, res) => {
   .catch(err => res.json(err));
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
-  Category.findOne({include:[Product]})
-  .then(data => res.json(data))
-  .catch(err => res.json(err));
+  try {
+    const categoryData = await Category.findByPk(req.params.id, {
+      include:[{model: Product, through: ProductTag, as: "category_products"}]
+    });
+
+    if(!categoryData) {
+      res.status(404).json({ message: "Category not found"});
+      return;
+    }
+
+    res.status(200).json(categoryData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 router.post('/', (req, res) => {
